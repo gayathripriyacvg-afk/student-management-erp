@@ -1,66 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import { getCourses, addCourse, deleteCourse, updateCourse } from '../services/api';
-import { Plus, Trash2, Edit2, Search, X, BookOpen, Clock, User } from 'lucide-react';
+import { Plus, Trash2, Edit2, Search, X, BookOpen, Clock, User, ArrowRight } from 'lucide-react';
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
-  const [formData, setFormData] = useState({
-    courseName: '',
-    duration: '',
-    instructor: ''
-  });
+  const [formData, setFormData] = useState({ courseName: '', duration: '', instructor: '' });
 
-  useEffect(() => {
-    fetchCourses();
-  }, []);
+  useEffect(() => { fetchCourses(); }, []);
 
   const fetchCourses = async () => {
     try {
       const response = await getCourses();
       setCourses(response.data);
-    } catch (error) {
-      console.error("Error fetching courses:", error);
-    }
+    } catch (error) { console.error("Error fetching courses:", error); }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (editingCourse) {
-        await updateCourse(editingCourse._id, formData);
-      } else {
-        await addCourse(formData);
-      }
-      setShowModal(false);
-      setEditingCourse(null);
+      if (editingCourse) { await updateCourse(editingCourse._id, formData); }
+      else { await addCourse(formData); }
+      setShowModal(false); setEditingCourse(null);
       setFormData({ courseName: '', duration: '', instructor: '' });
       fetchCourses();
-    } catch (error) {
-      console.error("Error saving course:", error);
-    }
+    } catch (error) { console.error("Error saving course:", error); }
   };
 
   const handleEdit = (course) => {
     setEditingCourse(course);
-    setFormData({
-      courseName: course.courseName,
-      duration: course.duration || '',
-      instructor: course.instructor || ''
-    });
+    setFormData({ courseName: course.courseName, duration: course.duration || '', instructor: course.instructor || '' });
     setShowModal(true);
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this course?")) {
-      try {
-        await deleteCourse(id);
-        fetchCourses();
-      } catch (error) {
-        console.error("Error deleting course:", error);
-      }
+    if (window.confirm("Delete this course?")) {
+      try { await deleteCourse(id); fetchCourses(); }
+      catch (error) { console.error("Error deleting course:", error); }
     }
   };
 
@@ -70,112 +48,110 @@ const Courses = () => {
   );
 
   return (
-    <div className="animate-fade-in">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 700 }}>Courses</h1>
-        <button className="btn-primary" onClick={() => setShowModal(true)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Plus size={20} /> Add Course
+    <div className="animate-slide-up">
+      <header style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: '#0f172a' }}>Courses</h1>
+          <p style={{ color: '#64748b', fontWeight: 500 }}>Browse and manage academic courses.</p>
+        </div>
+        <button className="btn-primary" onClick={() => setShowModal(true)}>
+          <Plus size={20} /> Add New Course
         </button>
-      </div>
+      </header>
 
-      <div style={{ position: 'relative', marginBottom: '2.5rem', maxWidth: '400px' }}>
-        <Search size={20} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)' }} />
+      <div style={{ position: 'relative', marginBottom: '3rem', maxWidth: '400px' }}>
+        <Search size={20} style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
         <input 
           type="text" 
-          placeholder="Search courses..." 
+          placeholder="Search by course name or instructor..." 
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ width: '100%', paddingLeft: '3rem' }}
+          style={{ paddingLeft: '3.5rem', background: 'white' }}
         />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '2rem' }}>
         {filteredCourses.length > 0 ? filteredCourses.map(course => (
-          <div key={course._id} className="glass-card" style={{ padding: '1.5rem', borderRadius: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div style={{ background: 'hsla(var(--primary), 0.1)', color: 'hsl(var(--primary))', padding: '0.75rem', borderRadius: '0.75rem' }}>
-                <BookOpen size={24} />
+          <div key={course._id} className="premium-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ 
+                width: '56px', 
+                height: '56px', 
+                borderRadius: '16px', 
+                background: 'hsla(var(--primary), 0.1)', 
+                color: 'hsl(var(--primary))',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <BookOpen size={28} />
               </div>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <button onClick={() => handleEdit(course)} style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', transition: 'color 0.3s' }}>
-                  <Edit2 size={18} />
+                <button onClick={() => handleEdit(course)} style={{ padding: '0.5rem', borderRadius: '0.75rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#64748b', cursor: 'pointer' }}>
+                  <Edit2 size={16} />
                 </button>
-                <button onClick={() => handleDelete(course._id)} style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', transition: 'color 0.3s' }}>
-                  <Trash2 size={18} />
+                <button onClick={() => handleDelete(course._id)} style={{ padding: '0.5rem', borderRadius: '0.75rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#64748b', cursor: 'pointer' }}>
+                  <Trash2 size={16} />
                 </button>
               </div>
             </div>
 
             <div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>{course.courseName}</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>
-                  <Clock size={16} />
-                  <span>{course.duration || 'Flexible duration'}</span>
+              <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', marginBottom: '1rem' }}>{course.courseName}</h3>
+              <div style={{ display: 'flex', gap: '1.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748b', fontSize: '0.9rem', fontWeight: 500 }}>
+                  <Clock size={16} /> {course.duration || 'Flexible'}
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>
-                  <User size={16} />
-                  <span>{course.instructor || 'Staff'}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748b', fontSize: '0.9rem', fontWeight: 500 }}>
+                  <User size={16} /> {course.instructor || 'TBA'}
                 </div>
               </div>
             </div>
 
-            <button className="btn-primary" style={{ marginTop: '0.5rem', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)' }}>
-              View Details
-            </button>
+            <div style={{ 
+              marginTop: 'auto', 
+              paddingTop: '1.5rem', 
+              borderTop: '1px solid #f1f5f9',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#94a3b8' }}>Enrolled: 0 Students</span>
+              <button style={{ color: 'hsl(var(--primary))', background: 'none', border: 'none', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                Manage <ArrowRight size={18} />
+              </button>
+            </div>
           </div>
         )) : (
-          <div style={{ gridColumn: '1 / -1', padding: '5rem', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
-            No courses found.
+          <div style={{ gridColumn: '1 / -1', padding: '6rem 0', textAlign: 'center', color: '#94a3b8' }}>
+            <BookOpen size={64} style={{ marginBottom: '1.5rem', opacity: 0.1 }} />
+            <p>No courses found matching your search.</p>
           </div>
         )}
       </div>
 
       {showModal && (
-        <div style={{ 
-          position: 'fixed', 
-          top: 0, left: 0, width: '100%', height: '100%', 
-          background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
-        }}>
-          <div className="glass-card animate-fade-in" style={{ width: '100%', maxWidth: '500px', padding: '2.5rem', borderRadius: '1.5rem', position: 'relative' }}>
-            <button 
-              onClick={() => { setShowModal(false); setEditingCourse(null); }}
-              style={{ position: 'absolute', right: '1.5rem', top: '1.5rem', background: 'transparent', border: 'none', color: 'white', cursor: 'pointer' }}
-            >
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="premium-card animate-slide-up" style={{ width: '100%', maxWidth: '500px', padding: '3rem', position: 'relative' }} onClick={e => e.stopPropagation()}>
+            <button onClick={() => setShowModal(false)} style={{ position: 'absolute', right: '1.5rem', top: '1.5rem', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}>
               <X size={24} />
             </button>
-            <h2 style={{ marginBottom: '2rem', fontSize: '1.8rem' }}>{editingCourse ? 'Edit Course' : 'Add New Course'}</h2>
+            <h2 style={{ marginBottom: '2.5rem', fontSize: '1.75rem', fontWeight: 800 }}>{editingCourse ? 'Edit Course' : 'Create New Course'}</h2>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <label style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.6)' }}>Course Name</label>
-                <input 
-                  type="text" required
-                  value={formData.courseName}
-                  onChange={(e) => setFormData({...formData, courseName: e.target.value})}
-                  placeholder="Mastering React"
-                />
+              <div>
+                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, color: '#475569', marginBottom: '0.5rem' }}>Course Title</label>
+                <input type="text" required value={formData.courseName} onChange={(e) => setFormData({...formData, courseName: e.target.value})} placeholder="e.g. Advanced UI Design" />
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <label style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.6)' }}>Duration</label>
-                <input 
-                  type="text"
-                  value={formData.duration}
-                  onChange={(e) => setFormData({...formData, duration: e.target.value})}
-                  placeholder="3 Months"
-                />
+              <div>
+                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, color: '#475569', marginBottom: '0.5rem' }}>Duration</label>
+                <input type="text" value={formData.duration} onChange={(e) => setFormData({...formData, duration: e.target.value})} placeholder="e.g. 12 Weeks" />
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <label style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.6)' }}>Instructor</label>
-                <input 
-                  type="text"
-                  value={formData.instructor}
-                  onChange={(e) => setFormData({...formData, instructor: e.target.value})}
-                  placeholder="Sarah Johnson"
-                />
+              <div>
+                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, color: '#475569', marginBottom: '0.5rem' }}>Primary Instructor</label>
+                <input type="text" value={formData.instructor} onChange={(e) => setFormData({...formData, instructor: e.target.value})} placeholder="e.g. Dr. Emily Chen" />
               </div>
-              <button type="submit" className="btn-primary" style={{ marginTop: '1rem' }}>
-                {editingCourse ? 'Update Course' : 'Add Course'}
+              <button type="submit" className="btn-primary" style={{ marginTop: '1.5rem', width: '100%', justifyContent: 'center' }}>
+                {editingCourse ? 'Save Changes' : 'Create Course'}
               </button>
             </form>
           </div>

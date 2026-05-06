@@ -9,15 +9,17 @@ import Marks from './pages/Marks';
 function App() {
   return (
     <Router>
-      <div className="bg-mesh"></div>
+      <div className="bg-mesh-light"></div>
       <Navbar />
-      <main style={{ marginLeft: '14rem', padding: '2rem 4rem 2rem 2rem' }}>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/students" element={<Students />} />
-          <Route path="/courses" element={<Courses />} />
-          <Route path="/marks" element={<Marks />} />
-        </Routes>
+      <main style={{ marginLeft: '16rem', padding: '2rem 4rem 4rem 2rem', minHeight: '100vh' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/students" element={<Students />} />
+            <Route path="/courses" element={<Courses />} />
+            <Route path="/marks" element={<Marks />} />
+          </Routes>
+        </div>
       </main>
     </Router>
   );
