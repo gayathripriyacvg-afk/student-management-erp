@@ -9,18 +9,31 @@ import Marks from './pages/Marks';
 function App() {
   return (
     <Router>
-      <div className="bg-mesh-light"></div>
+      <div className="bg-mesh"></div>
       <Navbar />
-      <main style={{ marginLeft: '16rem', padding: '2rem 4rem 4rem 2rem', minHeight: '100vh' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div className="layout-content">
+        <main className="container-responsive">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/students" element={<Students />} />
             <Route path="/courses" element={<Courses />} />
             <Route path="/marks" element={<Marks />} />
           </Routes>
-        </div>
-      </main>
+        </main>
+      </div>
+
+      <style>{`
+        .layout-content {
+          margin-left: 17rem;
+          transition: margin-left 0.3s ease;
+        }
+        @media (max-width: 1024px) {
+          .layout-content {
+            margin-left: 0;
+            padding-bottom: 5rem; /* Space for mobile bottom nav */
+          }
+        }
+      `}</style>
     </Router>
   );
 }

@@ -192,3 +192,14 @@ const MarksSchema = new mongoose.Schema({
 ```
 
 ---
+
+
+
+
+atlas: 
+gayathripriyacvg_db_user
+5ctXVBeVQaa6GlUi
+
+
+
+mongodb+srv://gayathripriyacvg_db_user:5ctXVBeVQaa6GlUi@priya-cluster-v1.pde4hux.mongodb.net/?appName=priya-cluster-v1
