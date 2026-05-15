@@ -8,7 +8,6 @@ exports.getStudents = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
 exports.addStudent = async (req, res) => {
   const student = new Student(req.body);
   try {
@@ -18,7 +17,6 @@ exports.addStudent = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
-
 exports.updateStudent = async (req, res) => {
   try {
     const student = await Student.findByIdAndUpdate(req.params.id, req.body, { new: true });
